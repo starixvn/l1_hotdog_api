@@ -72,3 +72,4 @@ Lets say you have 1 signing key and 1 validation key, in order to validate the t
 ```
 
 The consumer will use these keys to validation tokens being signed by either key1 or key2
+
