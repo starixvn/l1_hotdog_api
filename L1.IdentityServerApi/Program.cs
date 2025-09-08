@@ -16,7 +16,12 @@ namespace L1.IdentityServerApi
                                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
             // Add Sentry
-            builder.WebHost.UseSentry(opt => opt.Environment = builder.Configuration["Env"]);
+            builder.WebHost.UseSentry(opt =>
+            {
+                opt.Environment = builder.Configuration["Env"];
+                opt.SendDefaultPii = true;
+                opt.MaxRequestBodySize = Sentry.Extensibility.RequestSize.Always;
+            });
 
             // Configure port
             builder.WebHost.UseUrls($"http://0.0.0.0:{builder.Configuration["AppSettings:HostingPort"]}");
