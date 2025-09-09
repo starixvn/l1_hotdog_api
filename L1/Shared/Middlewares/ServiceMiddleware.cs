@@ -62,49 +62,49 @@ namespace L1.Shared.Middlewares
 
         public static void AddJetStreamServices(this IServiceCollection services, IAppSettings appSettings)
         {
-            services.AddSingleton<IConnection>(sp =>
-            {
-                var opts = ConnectionFactory.GetDefaultOptions();
-                opts.Url = appSettings.StreamSettings.Host;
-                var connection = new ConnectionFactory().CreateConnection(opts);
+            //services.AddSingleton<IConnection>(sp =>
+            //{
+            //    var opts = ConnectionFactory.GetDefaultOptions();
+            //    opts.Url = appSettings.StreamSettings.Host;
+            //    var connection = new ConnectionFactory().CreateConnection(opts);
 
-                var sentryClient = sp.GetRequiredService<ISentryClient>();
-                InitializeJetStream(connection, appSettings, sentryClient);
+            //    var sentryClient = sp.GetRequiredService<ISentryClient>();
+            //    InitializeJetStream(connection, appSettings, sentryClient);
 
-                return connection;
-            });
+            //    return connection;
+            //});
 
             services.AddSingleton<INatsService, NatsService>();
         }
 
-        private static void InitializeJetStream(IConnection connection, IAppSettings appSettings, ISentryClient sentryClient)
-        {
-            var formattedStreamName = $"{appSettings.StreamSettings.StreamName}_{appSettings.StreamSettings.Postfix}";
+        //private static void InitializeJetStream(IConnection connection, IAppSettings appSettings, ISentryClient sentryClient)
+        //{
+        //    var formattedStreamName = $"{appSettings.StreamSettings.StreamName}_{appSettings.StreamSettings.Postfix}";
 
-            try
-            {
-                var settings = appSettings.StreamSettings;
-                var jsm = connection.CreateJetStreamManagementContext();
+        //    try
+        //    {
+        //        var settings = appSettings.StreamSettings;
+        //        var jsm = connection.CreateJetStreamManagementContext();
 
-                var streamConfig = StreamConfiguration.Builder()
-                    .WithName(formattedStreamName)
-                    .WithSubjects($"{settings.SubjectPrefix}.>")
-                    .WithMaxAge(Duration.OfHours(settings.MaxAgeHours))
-                    .WithDiscardPolicy(DiscardPolicy.Old)
-                    .WithRetentionPolicy(RetentionPolicy.Limits)
-                    .WithMaxMessages(settings.MaxMessages)
-                    .Build();
+        //        var streamConfig = StreamConfiguration.Builder()
+        //            .WithName(formattedStreamName)
+        //            .WithSubjects($"{settings.SubjectPrefix}.>")
+        //            .WithMaxAge(Duration.OfHours(settings.MaxAgeHours))
+        //            .WithDiscardPolicy(DiscardPolicy.Old)
+        //            .WithRetentionPolicy(RetentionPolicy.Limits)
+        //            .WithMaxMessages(settings.MaxMessages)
+        //            .Build();
 
-                jsm.AddStream(streamConfig);
-            }
-            catch (NATSJetStreamException ex) when (ex.ErrorCode == JetStreamErrorStreamAlreadyExists)
-            {
-                sentryClient.CaptureMessage($"Stream {formattedStreamName} already exists");
-            }
-            catch (Exception ex)
-            {
-                sentryClient.CaptureException(ex);
-            }
-        }
+        //        jsm.AddStream(streamConfig);
+        //    }
+        //    catch (NATSJetStreamException ex) when (ex.ErrorCode == JetStreamErrorStreamAlreadyExists)
+        //    {
+        //        sentryClient.CaptureMessage($"Stream {formattedStreamName} already exists");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        sentryClient.CaptureException(ex);
+        //    }
+        //}
     }
 }

@@ -23,12 +23,10 @@ namespace L1.Features.PartnerCommunicators
         private readonly IJsonService jsonService;
 
         public NatsService(
-            IConnection connection,
             IAppSettings appSettings,
             ISentryClient sentryClient,
             IJsonService jsonService)
         {
-            this.jetStream = connection.CreateJetStreamContext();
             this.subjectPrefix = appSettings.StreamSettings.SubjectPrefix;
             this.enable = appSettings.StreamSettings.Enable;
             this.publishTimeoutMs = appSettings.StreamSettings.PublishTimeoutMs;
