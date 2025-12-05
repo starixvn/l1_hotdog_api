@@ -52,9 +52,12 @@ namespace L1.Tests.Features.HotdogCommunicators
         }
 
         [Theory, AutoData]
-        public async Task EnterPortal_ShouldPostWithBalanceEndpoint(PartnerGetBalanceCall call)
+        public async Task GetBalance_ShouldPostWithBalanceEndpoint(PartnerGetBalanceCall call)
         {
             // Arrange
+            var response = new PartnerResponse<PartnerGetBalanceResult> { Result = new PartnerGetBalanceResult { Balance = 1000 } };
+            HotdogService.Post<PartnerGetBalanceResult>(endpoints.GetBalance, call, appSettings.PartnerIds.SabaPlay_HD)
+                .Returns(x => Task.FromResult(response));
 
             // Act
             await service.GetBalance(call);
